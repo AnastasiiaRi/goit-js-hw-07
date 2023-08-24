@@ -22,14 +22,22 @@ gallery.insertAdjacentHTML("afterbegin", image);
 gallery.addEventListener("click", e => {
   e.preventDefault();
   if (e.target.nodeName !== "IMG") {
-        return;
-    } 
-  const imageOriginalZoom = basicLightbox.create(`<img src="${e.target.dataset.source}">`)
-  imageOriginalZoom.show();
-
-  gallery.addEventListener('keydown', function(e) {
+    return;
+  }
+  const instance = basicLightbox.create(`<img src="${e.target.dataset.source}">`,
+    {
+      onShow: () => {
+        window.addEventListener('keydown', onKeydownEsc);
+      },
+      onClose: () => {
+        window.removeEventListener('keydown', onKeydownEsc);
+      },
+    },
+  );
+  const onKeydownEsc = e => {
     if (e.key === 'Escape') {
-    imageOriginalZoom.close()
+      instance.close();
     }
-    });
+  };
+  instance.show();
 });
